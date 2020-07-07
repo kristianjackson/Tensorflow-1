@@ -45,7 +45,12 @@ epochs = 15
 IMG_HEIGHT = 150
 IMG_WIDTH = 150
 
-train_image_generator = ImageDataGenerator(rescale=1./255)
+train_image_generator = ImageDataGenerator(rescale=1./255,
+                                           rotation_range=45,
+                                           width_shift_range=.15,
+                                           height_shift_range=.15,
+                                           horizontal_flip=True,
+                                           zoom_range=0.5)
 validation_image_generator = ImageDataGenerator(rescale=1./255)
 
 train_data_gen = train_image_generator.flow_from_directory(batch_size=batch_size,
@@ -71,13 +76,16 @@ def plotImages(images_arr):
 
 plotImages(sample_training_images[:5])
 
-model = Sequential([
-    Conv2D(16, 3, padding='same', activation='relu', input_shape=(IMG_HEIGHT, IMG_WIDTH ,3)),
+models = Sequential([
+    Conv2D(16, 3, padding='same', activation='relu',
+           input_shape=(IMG_HEIGHT, IMG_WIDTH ,3)),
     MaxPooling2D(),
+    Dropout(0.2),
     Conv2D(32, 3, padding='same', activation='relu'),
     MaxPooling2D(),
     Conv2D(64, 3, padding='same', activation='relu'),
     MaxPooling2D(),
+    Dropout(0.2),
     Flatten(),
     Dense(512, activation='relu'),
     Dense(1)
